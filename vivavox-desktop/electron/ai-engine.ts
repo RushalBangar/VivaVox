@@ -1,12 +1,14 @@
-import { ipcMain, app } from 'electron';
-import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
+import { ipcMain } from 'electron';
+import { spawn } from 'child_process';
 import Store from 'electron-store';
 
 /**
- * AI Engine — Google Gemma Integration
+ * AI Engine — Local Gemma Integration (via Ollama)
  *
- * Uses the @google/generative-ai SDK to interact with Google's Gemma model.
- * The API key is stored securely in electron-store (encrypted local storage).
+ * This version uses a local Ollama instance to run Gemma.
+ * This ensures total privacy and offline capability as requested.
+ *
+ * Requirements: Ollama must be installed and gemma:2b must be downloaded.
  */
 
 interface AnalysisResult {
@@ -14,105 +16,65 @@ interface AnalysisResult {
   summary: string;
 }
 
-const store = new Store({
-  encryptionKey: 'vivavox-secure-2026', // Encrypts sensitive data at rest
-});
+const store = new Store();
 
-let genAI: GoogleGenerativeAI | null = null;
-let model: GenerativeModel | null = null;
+// Helper to call Ollama via CLI
+async function callOllama(prompt: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    let output = '';
+    // Use 'ollama run gemma:2b --format json' if supported, 
+    // or just 'run' and parse the string.
+    const child = spawn('ollama', ['run', 'gemma:2b', prompt]);
 
-function initializeModel(apiKey: string): void {
-  genAI = new GoogleGenerativeAI(apiKey);
-  model = genAI.getGenerativeModel({ model: 'gemma-3-4b-it' });
-}
+    child.stdout.on('data', (data) => {
+      output += data.toString();
+    });
 
-// Try to load saved API key on startup
-const savedKey = store.get('gemma-api-key') as string | undefined;
-if (savedKey) {
-  initializeModel(savedKey);
+    child.stderr.on('data', (data) => {
+      console.error(`[Ollama Error]: ${data}`);
+    });
+
+    child.on('close', (code) => {
+      if (code === 0) {
+        resolve(output.trim());
+      } else {
+        reject(new Error(`Ollama process exited with code ${code}. Is Ollama installed?`));
+      }
+    });
+  });
 }
 
 export function setupAIHandlers(): void {
-  // ─── Set API Key ─────────────────────────────────────────
-  ipcMain.handle('ai:set-api-key', async (_event, key: string) => {
-    store.set('gemma-api-key', key);
-    initializeModel(key);
-  });
-
-  // ─── Analyze Resume ──────────────────────────────────────
+  // ─── Analyze Resume (Local) ──────────────────────────────
   ipcMain.handle('ai:analyze-resume', async (_event, text: string): Promise<AnalysisResult> => {
-    if (!model) {
-      throw new Error('AI model not initialized. Please set your Google AI API key first.');
-    }
+    const prompt = `Analyze this resume and generate 10 interview questions.
+Return ONLY a JSON object: {"questions": ["q1", "q2", ...], "summary": "brief summary"}
 
-    const prompt = `You are an expert interview coach. Analyze the following resume and generate exactly 10 professional, role-specific interview questions based on the candidate's skills, experience, and projects listed.
-
-Return your response as a valid JSON object with exactly this structure:
-{
-  "questions": ["question1", "question2", ...],
-  "summary": "A brief 2-3 sentence overview of the candidate's profile"
-}
-
-IMPORTANT: Return ONLY the JSON object. No markdown, no code fences, no explanation.
-
-Resume Text:
-${text}`;
+Resume: ${text}`;
 
     try {
-      const result = await model.generateContent(prompt);
-      const responseText = result.response.text().trim();
-
-      // Extract JSON from the response (handle potential markdown wrapping)
-      let jsonStr = responseText;
-      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        jsonStr = jsonMatch[0];
-      }
-
-      const parsed: AnalysisResult = JSON.parse(jsonStr);
-
-      // Validate structure
-      if (!Array.isArray(parsed.questions) || typeof parsed.summary !== 'string') {
-        throw new Error('Invalid response structure');
-      }
-
+      const response = await callOllama(prompt);
+      
+      // Attempt to extract JSON
+      const jsonMatch = response.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error('Failed to parse AI response as JSON');
+      
+      const parsed: AnalysisResult = JSON.parse(jsonMatch[0]);
       return parsed;
     } catch (error: any) {
-      console.error('Gemma analysis failed:', error);
-      throw new Error(`AI Analysis failed: ${error.message}. Please try again.`);
+      console.error('Local AI Analysis failed:', error);
+      throw new Error(`Local AI Error: ${error.message}. Make sure Ollama is running and gemma:2b is downloaded.`);
     }
   });
 
-  // ─── Evaluate Answer ─────────────────────────────────────
+  // ─── Evaluate Answer (Local) ─────────────────────────────
   ipcMain.handle('ai:evaluate-answer', async (_event, question: string, answer: string): Promise<string> => {
-    if (!model) {
-      throw new Error('AI model not initialized. Please set your Google AI API key first.');
-    }
-
-    const prompt = `You are an expert interview evaluator. Analyze the following interview response.
-
-Question: ${question}
-Candidate's Answer: ${answer}
-
-Evaluate the answer across these dimensions:
-1. **Technical Accuracy** — Is the answer factually correct and technically sound?
-2. **Communication Clarity** — Is the response well-structured and articulate?
-3. **Confidence Level** — Does the candidate demonstrate confidence without arrogance?
-4. **Depth of Knowledge** — Does the answer show deep understanding or just surface-level knowledge?
-
-Provide brief, constructive feedback (3-5 sentences) that would help the candidate improve. Be encouraging but honest.`;
+    const prompt = `Question: ${question}\nAnswer: ${answer}\nAnalyze for accuracy and clarity. Provide 3 feedback sentences.`;
 
     try {
-      const result = await model.generateContent(prompt);
-      return result.response.text().trim();
+      return await callOllama(prompt);
     } catch (error: any) {
-      console.error('Gemma evaluation failed:', error);
-      throw new Error(`AI Evaluation failed: ${error.message}`);
+      throw new Error(`Local AI Evaluation failed: ${error.message}`);
     }
-  });
-
-  // ─── App Version ──────────────────────────────────────────
-  ipcMain.handle('app:get-version', () => {
-    return app.getVersion();
   });
 }
