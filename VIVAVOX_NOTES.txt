@@ -1,0 +1,41 @@
+We have to create software for desktop, intead of making website.
+For AI we will use gemma 4 effeciency model, it will to directly analyze resume and create questions based on that.
+And it will also check students answer with audio and video.
+Then give last dashboard page with result, and other things that we include in our website.
+This makes our project powerfull,uncrashable and unique.
+It will increase quality and provide best user experience.
+Best UI/UX, use of 3d design, animations, and many more.
+
+questions:
+which languages we will use?
+Which OS supports this software?
+How much time will it take to build?
+Any problems we will face?
+
+
+Other things will dicuss later.
+I want it best.
+
+1. Which languages we will use?
+To achieve the "Best UI/UX" with 3D designs and smooth animations, I recommend a hybrid stack:
+
+Frontend (The Visuals): TypeScript with React or Next.js. We will use Three.js for 3D elements and Framer Motion or GSAP for high-end micro-animations.
+Desktop Wrapper: Tauri (written in Rust).
+Why Tauri? It is much faster and lighter than Electron, making the app feel "uncrashable" and professional. It uses the system's native webview, keeping the file size small.
+AI Engine (Gemma): We will use Ollama or llama.cpp (via Rust bindings) to run the Gemma model locally.
+Audio/Video Processing: MediaPipe (for eye contact and gesture tracking) and Whisper.cpp (for real-time, offline audio-to-text).
+2. Which OS supports this software?
+This stack is fully cross-platform. We will support:
+
+Windows 10/11 (Primary focus for most desktop users).
+macOS (Intel and Apple Silicon).
+Linux (Various distributions).
+3. How much time will it take to build?
+Phase 1: Core Engine (2-3 Weeks): Setting up the local Gemma inference, resume parsing, and basic desktop shell.
+Phase 2: The Interview Room (3-4 Weeks): Implementing real-time video/audio analysis and the HUD-style UI.
+Phase 3: Polish & 3D Design (2-3 Weeks): Adding the 3D animations, transitions, and the "premium" dashboard.
+Total: Approximately 8-10 weeks for a production-ready, state-of-the-art software.
+4. Any problems we will face?
+Hardware Requirements: Running Gemma and Video analysis simultaneously requires a modern CPU/GPU. We will need to optimize the models (using 4-bit quantization) to ensure they run on average laptops.
+Installation Size: The AI models themselves are large (2GB to 5GB). We'll need a smart installer that downloads models only when needed.
+Privacy Permissions: Modern OSs (especially macOS) are strict about camera/mic access. We must handle these permissions gracefully.

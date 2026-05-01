@@ -1,0 +1,54 @@
+appId: com.vivavox.app
+productName: VivaVox
+copyright: Copyright © 2026 VivaVox
+
+directories:
+  output: release
+  buildResources: assets
+
+files:
+  - dist-electron/**/*
+  - out/**/*
+  - "!node_modules/**/*"
+
+extraMetadata:
+  main: dist-electron/main.js
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: assets/icon.ico
+  artifactName: VivaVox-Setup-${version}.${ext}
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: VivaVox
+
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  icon: assets/icon.icns
+  category: public.app-category.education
+  artifactName: VivaVox-${version}-${arch}.${ext}
+
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+  icon: assets/icon.png
+  category: Education
+  artifactName: VivaVox-${version}.${ext}
+
+publish:
+  provider: github
+  owner: YOUR_GITHUB_USERNAME
+  repo: VivaVox

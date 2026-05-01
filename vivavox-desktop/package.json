@@ -1,0 +1,49 @@
+{
+  "name": "vivavox-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "electron:compile": "tsc -p tsconfig.electron.json",
+    "electron:dev": "npm run electron:compile && concurrently -k \"next dev\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron:build": "next build && npm run electron:compile && electron-builder --config electron-builder.yml",
+    "electron:build:win": "next build && npm run electron:compile && electron-builder --win --config electron-builder.yml",
+    "electron:build:mac": "next build && npm run electron:compile && electron-builder --mac --config electron-builder.yml",
+    "electron:build:linux": "next build && npm run electron:compile && electron-builder --linux --config electron-builder.yml"
+  },
+  "dependencies": {
+    "next": "14.2.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "three": "^0.164.1",
+    "@types/three": "^0.164.0",
+    "@react-three/fiber": "^8.16.6",
+    "@react-three/drei": "^9.105.11",
+    "framer-motion": "^11.1.7",
+    "lucide-react": "^0.378.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.3.0",
+    "@google/generative-ai": "^0.21.0",
+    "electron-serve": "^2.1.1",
+    "electron-store": "^10.0.0",
+    "electron-updater": "^6.3.9"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.3",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "concurrently": "^9.1.2",
+    "wait-on": "^8.0.1"
+  }
+}
