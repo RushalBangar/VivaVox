@@ -50,5 +50,5 @@ linux:
 
 publish:
   provider: github
-  owner: YOUR_GITHUB_USERNAME
+  owner: RushalBangar
   repo: VivaVox

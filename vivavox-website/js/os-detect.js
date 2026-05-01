@@ -10,7 +10,7 @@
   'use strict';
 
   // ─── Configuration ─────────────────────────────────────────
-  const GITHUB_OWNER = 'YOUR_GITHUB_USERNAME';
+  const GITHUB_OWNER = 'RushalBangar';
   const GITHUB_REPO = 'VivaVox';
   const RELEASES_BASE = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest/download`;
 

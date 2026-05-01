@@ -78,6 +78,7 @@ VivaVox is designed for absolute privacy.
 
 ## 👨‍💻 Author
 **Rushal Bangar** — Lead Developer & Designer
+https://github.com/RushalBangar/VivaVox
 
 ---
 *VivaVox 2026 // Neural Dynamics*
