@@ -34,3 +34,9 @@ yarn-error.log*
 
 # Vercel
 .vercel
+
+# Electron
+release/
+dist-electron/
+dist/
+dist_electron/

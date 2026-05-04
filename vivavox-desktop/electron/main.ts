@@ -1,8 +1,11 @@
 import { app, BrowserWindow, ipcMain, session } from 'electron';
 import path from 'path';
+import serve from 'electron-serve';
 import { setupAIHandlers } from './ai-engine';
 import { setupHardwareCheckHandlers } from './hardware-check';
 import { setupAutoUpdater } from './updater';
+
+const loadURL = serve({ directory: 'out' });
 
 // Keep a global reference to prevent garbage collection
 let mainWindow: BrowserWindow | null = null;
@@ -44,9 +47,8 @@ function createWindow(): void {
     mainWindow.loadURL('http://localhost:3000');
     mainWindow.webContents.openDevTools({ mode: 'detach' });
   } else {
-    // In production, load the exported Next.js static files
-    const indexPath = path.join(__dirname, '../out/index.html');
-    mainWindow.loadFile(indexPath);
+    // In production, load using electron-serve
+    loadURL(mainWindow);
   }
 
   // Elegant fade-in when ready

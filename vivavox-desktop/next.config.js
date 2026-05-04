@@ -5,7 +5,7 @@ const nextConfig = {
     unoptimized: true,
   },
   // Electron loads from file:// protocol in production
-  assetPrefix: process.env.NODE_ENV === 'production' ? './' : undefined,
+  // assetPrefix: process.env.NODE_ENV === 'production' ? './' : undefined,
   trailingSlash: true,
 };
 
