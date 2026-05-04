@@ -44,6 +44,9 @@
   const chars = '!<>-_\\/[]{}—=+*^?#________';
 
   function scramble(el) {
+    if (el.dataset.scrambling === 'true') return; // Prevent double-triggering
+    el.dataset.scrambling = 'true';
+    
     const originalText = el.innerText;
     let iteration = 0;
     
@@ -56,9 +59,13 @@
         })
         .join("");
       
-      if(iteration >= originalText.length) clearInterval(interval);
-      iteration += 1 / 3;
-    }, 30);
+      if(iteration >= originalText.length) {
+        clearInterval(interval);
+        el.innerText = originalText; // Ensure it's exactly the same
+        el.dataset.scrambling = 'false';
+      }
+      iteration += 1; // FASTER: reveal 1 letter per frame
+    }, 25); // Faster interval
   }
 
   scrambleElements.forEach(el => {
