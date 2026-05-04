@@ -14,7 +14,7 @@
   const GITHUB_REPO = 'VivaVox';
   const RELEASES_BASE = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest/download`;
 
-  const APP_VERSION = '0.1.1'; // Should match package.json version
+  const APP_VERSION = '0.1.2'; // Should match package.json version
 
   const OS_CONFIG = {
     windows: {
