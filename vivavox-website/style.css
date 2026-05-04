@@ -32,6 +32,11 @@ body {
 }
 
 /* ─── Animated Background ─────────────────────────────────── */
+@keyframes grid-pan {
+  from { background-position: 0 0; }
+  to { background-position: 60px 60px; }
+}
+
 .bg-grid {
   position: fixed; inset: 0; z-index: 0;
   background-image:
@@ -39,18 +44,27 @@ body {
     linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
   background-size: 60px 60px;
   pointer-events: none;
+  animation: grid-pan 10s linear infinite;
+}
+
+@keyframes neural-float {
+  0% { transform: translate(0, 0) scale(1); opacity: 0.15; }
+  33% { transform: translate(30px, -50px) scale(1.1); opacity: 0.2; }
+  66% { transform: translate(-20px, 20px) scale(0.9); opacity: 0.1; }
+  100% { transform: translate(0, 0) scale(1); opacity: 0.15; }
 }
 
 .bg-glow {
-  position: fixed; width: 600px; height: 600px; border-radius: 50%;
-  filter: blur(150px); opacity: 0.15; pointer-events: none; z-index: 0;
+  position: fixed; width: 800px; height: 800px; border-radius: 50%;
+  filter: blur(160px); pointer-events: none; z-index: 0;
 }
-.bg-glow--cyan { background: var(--cyan); top: -200px; right: -100px; animation: float-glow 12s ease-in-out infinite; }
-.bg-glow--purple { background: var(--purple); bottom: -200px; left: -100px; animation: float-glow 15s ease-in-out infinite reverse; }
-
-@keyframes float-glow {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(40px, 30px); }
+.bg-glow--cyan { 
+  background: var(--cyan); top: -300px; right: -200px; 
+  animation: neural-float 15s ease-in-out infinite; 
+}
+.bg-glow--purple { 
+  background: var(--purple); bottom: -300px; left: -200px; 
+  animation: neural-float 18s ease-in-out infinite reverse; 
 }
 
 /* ─── Navigation ──────────────────────────────────────────── */
