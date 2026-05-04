@@ -105,11 +105,40 @@ body {
   50% { opacity: 0.4; transform: scale(0.8); }
 }
 .hero__title {
-  font-size: clamp(64px, 10vw, 120px);
-  font-weight: 900; line-height: 0.9;
-  letter-spacing: -0.04em;
+  font-size: clamp(64px, 10vw, 110px);
+  font-weight: 800; line-height: 0.95;
+  letter-spacing: -0.05em;
   margin-bottom: 24px;
   animation: fadeInUp 0.8s ease 0.1s both;
+}
+
+/* ─── Antigravity Style CTA ──────────────────────────────── */
+.nav__cta {
+  background: white;
+  color: black;
+  padding: 10px 24px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid white;
+}
+.nav__cta:hover {
+  background: transparent;
+  color: white;
+  transform: scale(1.05);
+}
+
+/* ─── Shimmer Effect ─────────────────────────────────────── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.btn--shimmer {
+  background: linear-gradient(90deg, rgba(0,242,255,0.1), rgba(189,0,255,0.2), rgba(0,242,255,0.1));
+  background-size: 200% 100%;
+  animation: shimmer 4s infinite linear;
 }
 .hero__title-line { display: block; color: white; }
 .hero__title-line--accent {
