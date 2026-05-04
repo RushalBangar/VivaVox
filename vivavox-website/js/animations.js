@@ -39,9 +39,47 @@
     });
   });
 
+  // ─── Cyber-Scramble Effect ────────────────────────────────
+  const scrambleElements = document.querySelectorAll('.feature-card__title, .hero__title-line');
+  const chars = '!<>-_\\/[]{}—=+*^?#________';
+
+  function scramble(el) {
+    const originalText = el.innerText;
+    let iteration = 0;
+    
+    const interval = setInterval(() => {
+      el.innerText = originalText
+        .split("")
+        .map((letter, index) => {
+          if(index < iteration) return originalText[index];
+          return chars[Math.floor(Math.random() * 26)];
+        })
+        .join("");
+      
+      if(iteration >= originalText.length) clearInterval(interval);
+      iteration += 1 / 3;
+    }, 30);
+  }
+
+  scrambleElements.forEach(el => {
+    el.addEventListener('mouseenter', () => scramble(el));
+  });
+
   // ─── Nav Background on Scroll ──────────────────────────────
   const nav = document.getElementById('main-nav');
+  // ─── Product Reveal Scroll ──────────────────────────────
+  const orb = document.querySelector('.hero__orb');
   window.addEventListener('scroll', () => {
+    const scroll = window.scrollY;
+    if (scroll < 800) {
+      const scale = 1 - scroll / 1000;
+      const opacity = 1 - scroll / 800;
+      if (orb) {
+        orb.style.transform = `scale(${scale})`;
+        orb.style.opacity = opacity;
+      }
+    }
+    
     if (window.scrollY > 80) {
       nav?.classList.add('nav--scrolled');
     } else {

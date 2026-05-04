@@ -406,6 +406,38 @@ body {
 .section__header { opacity: 0; transform: translateY(20px); }
 .section__header.revealed { opacity: 1; transform: translateY(0); }
 
+/* ─── Comparison Section ───────────────────────────────────── */
+.comparison { padding: 120px 80px; position: relative; z-index: 1; }
+.comparison__grid {
+  display: flex; align-items: center; justify-content: center;
+  gap: 40px; max-width: 1000px; margin: 0 auto;
+}
+.comparison__card {
+  flex: 1; background: var(--bg-card); border: 1px solid var(--border);
+  padding: 48px; border-radius: 24px; transition: all 0.4s ease;
+}
+.comparison__card--cloud { border-left: 4px solid #ff4b4b; }
+.comparison__card--viva { border-left: 4px solid var(--cyan); background: rgba(0, 242, 255, 0.02); }
+
+.comparison__card-title { font-size: 20px; font-weight: 700; margin-bottom: 24px; color: white; }
+.comparison__list { list-style: none; }
+.comparison__item {
+  font-size: 15px; margin-bottom: 16px; padding-left: 28px; position: relative;
+  color: var(--text-dim);
+}
+.comparison__item::before {
+  content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  font-size: 14px; font-weight: bold;
+}
+.comparison__item--bad::before { content: '✕'; color: #ff4b4b; }
+.comparison__item--good::before { content: '✓'; color: var(--cyan); }
+.comparison__item--good { color: white; }
+
+.comparison__divider {
+  font-family: var(--mono); font-weight: 800; font-size: 24px;
+  color: var(--text-dim); opacity: 0.3;
+}
+
 /* ─── Responsive ──────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .hero { flex-direction: column; padding: 120px 40px 60px; text-align: center; }
@@ -420,8 +452,10 @@ body {
   .nav__links { gap: 16px; }
   .hero { padding: 100px 24px 40px; }
   .hero__title { font-size: 56px; }
-  .features, .how-it-works, .requirements { padding: 80px 24px; }
+  .features, .how-it-works, .requirements, .comparison { padding: 80px 24px; }
   .hero__stats { flex-wrap: wrap; gap: 20px; }
+  .comparison__grid { flex-direction: column; }
+  .comparison__divider { margin: 20px 0; transform: rotate(90deg); }
   .hero__stat-divider { display: none; }
 }
 
