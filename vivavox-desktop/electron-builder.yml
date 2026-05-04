@@ -9,7 +9,6 @@ directories:
 files:
   - dist-electron/**/*
   - out/**/*
-  - "!node_modules/**/*"
 
 extraMetadata:
   main: dist-electron/main.js
