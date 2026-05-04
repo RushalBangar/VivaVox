@@ -67,7 +67,7 @@ body {
   padding: 14px 48px;
 }
 .nav__brand { display: flex; align-items: center; gap: 10px; }
-.nav__logo-img { width: 32px; height: 32px; object-fit: contain; }
+.nav__logo-img { width: 60px; height: 60px; object-fit: contain; border-radius: 12px; }
 .nav__name { font-size: 14px; font-weight: 800; letter-spacing: 0.3em; color: white; }
 .nav__links { display: flex; align-items: center; gap: 32px; }
 .nav__link {
