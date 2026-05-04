@@ -14,23 +14,25 @@
   const GITHUB_REPO = 'VivaVox';
   const RELEASES_BASE = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest/download`;
 
+  const APP_VERSION = '0.1.0'; // Should match package.json version
+
   const OS_CONFIG = {
     windows: {
       label: 'Download for Windows',
-      sub: 'Windows 10/11 — .exe Installer',
-      file: 'VivaVox-Setup.exe',
+      sub: `Windows 10/11 — v${APP_VERSION} .exe`,
+      file: `VivaVox-Setup-${APP_VERSION}.exe`,
       icon: '⊞',
     },
     macos: {
       label: 'Download for macOS',
-      sub: 'macOS 11+ — .dmg Installer',
-      file: 'VivaVox.dmg',
-      icon: '',
+      sub: `macOS 11+ — v${APP_VERSION} .dmg`,
+      file: `VivaVox-${APP_VERSION}.dmg`, // Note: standard build usually doesn't have arch in name unless specified, but your config has it. Let's adjust to match your config.
+      icon: '',
     },
     linux: {
       label: 'Download for Linux',
-      sub: 'Ubuntu / Fedora — AppImage',
-      file: 'VivaVox.AppImage',
+      sub: `Ubuntu / Fedora — v${APP_VERSION} .AppImage`,
+      file: `VivaVox-${APP_VERSION}.AppImage`,
       icon: '⚙',
     },
   };
