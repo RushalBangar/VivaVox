@@ -25,8 +25,8 @@
     },
     macos: {
       label: 'Download for macOS',
-      sub: `macOS 11+ — v${APP_VERSION} .dmg`,
-      file: `VivaVox-${APP_VERSION}.dmg`, // Note: standard build usually doesn't have arch in name unless specified, but your config has it. Let's adjust to match your config.
+      sub: `macOS 11+ (Intel & Apple Silicon) — v${APP_VERSION}`,
+      file: `VivaVox-${APP_VERSION}-arm64.dmg`, // Defaulting to arm64, user can find x64 in releases if needed
       icon: '',
     },
     linux: {

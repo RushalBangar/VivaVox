@@ -206,11 +206,18 @@ body {
 }
 .hero__alt-label { font-size: 12px; color: var(--text-dim); }
 .hero__alt-link {
-  font-size: 12px; color: var(--cyan);
-  text-decoration: none; font-weight: 600;
-  opacity: 0.7; transition: opacity 0.3s;
+  font-size: 13px; color: var(--text-dim);
+  text-decoration: none; font-weight: 500;
+  padding: 4px 10px; border-radius: 6px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  transition: all 0.3s;
 }
-.hero__alt-link:hover { opacity: 1; text-decoration: underline; }
+.hero__alt-link:hover { 
+  color: var(--cyan); 
+  border-color: var(--cyan);
+  background: var(--cyan-dim);
+}
 
 /* ─── Hero Stats ──────────────────────────────────────────── */
 .hero__stats {
