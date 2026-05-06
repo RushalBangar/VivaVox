@@ -24,7 +24,7 @@ export function startOllamaServer() {
   
   // Path to the bundled binary
   const binPath = isDev 
-    ? path.join(__dirname, '../../assets/bin', exeName)
+    ? path.join(__dirname, '../assets/bin', exeName)
     : path.join(process.resourcesPath, 'bin', exeName);
 
   if (!fs.existsSync(binPath)) {
@@ -77,7 +77,7 @@ async function callOllamaAPI(prompt: string): Promise<string> {
     throw new Error(`Ollama API returned ${response.statusText}`);
   }
 
-  const data = await response.json();
+  const data = (await response.json()) as any;
   return data.response.trim();
 }
 
@@ -89,7 +89,7 @@ export function setupAIHandlers(): void {
   ipcMain.handle('ai:check-model', async () => {
     try {
       const response = await fetch(`${OLLAMA_HOST}/api/tags`);
-      const data = await response.json();
+      const data = (await response.json()) as any;
       const hasGemma = data.models?.some((m: any) => m.name === 'gemma:2b');
       return hasGemma;
     } catch (e) {
@@ -116,11 +116,11 @@ export function setupAIHandlers(): void {
         if (done) break;
         
         const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split('\\n').filter(l => l.trim() !== '');
+        const lines = chunk.split('\n').filter(l => l.trim() !== '');
         
         for (const line of lines) {
           try {
-            const data = JSON.parse(line);
+            const data = JSON.parse(line) as any;
             if (data.total && data.completed) {
               const percent = Math.round((data.completed / data.total) * 100);
               event.reply('ai:pull-progress', percent);
@@ -144,7 +144,7 @@ Resume: ${text}`;
 
     try {
       const response = await callOllamaAPI(prompt);
-      const jsonMatch = response.match(/\\{[\\s\\S]*\\}/);
+      const jsonMatch = response.match(/\{[\s\S]*\}/);
       if (!jsonMatch) throw new Error('Failed to parse AI response as JSON');
       return JSON.parse(jsonMatch[0]);
     } catch (error: any) {
@@ -154,7 +154,7 @@ Resume: ${text}`;
 
   // ─── Evaluate Answer (Local REST) ────────────────────────
   ipcMain.handle('ai:evaluate-answer', async (_event, question: string, answer: string): Promise<string> => {
-    const prompt = `Question: ${question}\\nAnswer: ${answer}\\nAnalyze for accuracy and clarity. Provide 3 feedback sentences.`;
+    const prompt = `Question: ${question}\nAnswer: ${answer}\nAnalyze for accuracy and clarity. Provide 3 feedback sentences.`;
     try {
       return await callOllamaAPI(prompt);
     } catch (error: any) {
