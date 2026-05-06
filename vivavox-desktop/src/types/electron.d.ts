@@ -20,6 +20,11 @@ interface ElectronAPI {
   analyzeResume: (text: string) => Promise<AnalysisResult>;
   evaluateAnswer: (question: string, answer: string) => Promise<string>;
   setApiKey: (key: string) => Promise<void>;
+  checkModel: () => Promise<boolean>;
+  pullModel: () => void;
+  onPullProgress: (callback: (percent: number) => void) => void;
+  onPullComplete: (callback: () => void) => void;
+  onPullError: (callback: (error: string) => void) => void;
   checkHardware: () => Promise<HardwareStatus>;
   getAppVersion: () => Promise<string>;
   getPlatform: () => string;

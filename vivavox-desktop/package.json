@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "electron:compile": "tsc -p tsconfig.electron.json",
+    "electron:compile": "node scripts/download-ollama.js && tsc -p tsconfig.electron.json",
     "electron:dev": "npm run electron:compile && concurrently -k \"next dev\" \"wait-on http://localhost:3000 && electron .\"",
     "electron:build": "next build && npm run electron:compile && electron-builder --config electron-builder.yml",
     "electron:build:win": "next build && npm run electron:compile && electron-builder --win --config electron-builder.yml",

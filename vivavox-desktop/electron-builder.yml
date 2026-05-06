@@ -10,6 +10,12 @@ files:
   - dist-electron/**/*
   - out/**/*
 
+extraResources:
+  - from: assets/bin
+    to: bin
+    filter:
+      - "**/*"
+
 extraMetadata:
   main: dist-electron/main.js
 

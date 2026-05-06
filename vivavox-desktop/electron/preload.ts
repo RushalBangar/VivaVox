@@ -23,6 +23,11 @@ export interface ElectronAPI {
   analyzeResume: (text: string) => Promise<AnalysisResult>;
   evaluateAnswer: (question: string, answer: string) => Promise<string>;
   setApiKey: (key: string) => Promise<void>;
+  checkModel: () => Promise<boolean>;
+  pullModel: () => void;
+  onPullProgress: (callback: (percent: number) => void) => void;
+  onPullComplete: (callback: () => void) => void;
+  onPullError: (callback: (error: string) => void) => void;
 
   // Hardware
   checkHardware: () => Promise<HardwareStatus>;
@@ -47,6 +52,27 @@ const electronAPI: ElectronAPI = {
 
   setApiKey: (key: string) =>
     ipcRenderer.invoke('ai:set-api-key', key),
+
+  checkModel: () =>
+    ipcRenderer.invoke('ai:check-model'),
+
+  pullModel: () =>
+    ipcRenderer.send('ai:pull-model'),
+
+  onPullProgress: (callback) => {
+    ipcRenderer.removeAllListeners('ai:pull-progress');
+    ipcRenderer.on('ai:pull-progress', (_event, percent) => callback(percent));
+  },
+
+  onPullComplete: (callback) => {
+    ipcRenderer.removeAllListeners('ai:pull-complete');
+    ipcRenderer.on('ai:pull-complete', () => callback());
+  },
+
+  onPullError: (callback) => {
+    ipcRenderer.removeAllListeners('ai:pull-error');
+    ipcRenderer.on('ai:pull-error', (_event, error) => callback(error));
+  },
 
   // ─── Hardware Check ────────────────────────────────────────
   checkHardware: () =>
