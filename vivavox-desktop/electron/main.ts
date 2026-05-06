@@ -1,11 +1,10 @@
 import { app, BrowserWindow, ipcMain, session } from 'electron';
 import path from 'path';
-import serve from 'electron-serve';
 import { setupAIHandlers } from './ai-engine';
 import { setupHardwareCheckHandlers } from './hardware-check';
 import { setupAutoUpdater } from './updater';
 
-const loadURL = serve({ directory: 'out' });
+let loadURL: any = null;
 
 // Keep a global reference to prevent garbage collection
 let mainWindow: BrowserWindow | null = null;
@@ -48,7 +47,9 @@ function createWindow(): void {
     mainWindow.webContents.openDevTools({ mode: 'detach' });
   } else {
     // In production, load using electron-serve
-    loadURL(mainWindow);
+    if (loadURL) {
+      loadURL(mainWindow);
+    }
   }
 
   // Elegant fade-in when ready
@@ -76,7 +77,14 @@ if (!gotLock) {
   });
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  if (!isDev) {
+    // Use eval to bypass TypeScript transpiling import() to require()
+    const serveModule = await eval('import("electron-serve")');
+    const serve = serveModule.default || serveModule;
+    loadURL = serve({ directory: 'out' });
+  }
+
   createWindow();
 
   // Register all IPC handlers
