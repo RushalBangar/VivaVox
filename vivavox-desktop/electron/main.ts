@@ -1,10 +1,11 @@
 import { app, BrowserWindow, ipcMain, session } from 'electron';
 import path from 'path';
+import serve from 'electron-serve';
 import { setupAIHandlers } from './ai-engine';
 import { setupHardwareCheckHandlers } from './hardware-check';
 import { setupAutoUpdater } from './updater';
 
-let loadURL: any = null;
+const loadURL = serve({ directory: 'out' });
 
 // Keep a global reference to prevent garbage collection
 let mainWindow: BrowserWindow | null = null;
@@ -78,13 +79,6 @@ if (!gotLock) {
 }
 
 app.whenReady().then(async () => {
-  if (!isDev) {
-    // Use eval to bypass TypeScript transpiling import() to require()
-    const serveModule = await eval('import("electron-serve")');
-    const serve = serveModule.default || serveModule;
-    loadURL = serve({ directory: 'out' });
-  }
-
   createWindow();
 
   // Register all IPC handlers
