@@ -27,11 +27,11 @@ if (platform === 'win32') {
   outputName = 'ollama';
 } else if (platform === 'linux') {
   if (arch === 'arm64') {
-    downloadUrl = 'https://ollama.com/download/ollama-linux-arm64';
+    downloadUrl = 'https://ollama.com/download/ollama-linux-arm64.tgz';
   } else {
-    downloadUrl = 'https://ollama.com/download/ollama-linux-amd64';
+    downloadUrl = 'https://ollama.com/download/ollama-linux-amd64.tgz';
   }
-  outputName = 'ollama';
+  outputName = 'ollama.tgz';
 }
 
 if (!downloadUrl) {
