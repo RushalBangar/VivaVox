@@ -19,19 +19,15 @@ if (platform === 'win32') {
   downloadUrl = 'https://ollama.com/download/ollama-windows-amd64.zip';
   outputName = 'ollama-windows-amd64.zip';
 } else if (platform === 'darwin') {
-  if (arch === 'arm64') {
-    downloadUrl = 'https://ollama.com/download/ollama-darwin';
-  } else {
-    downloadUrl = 'https://ollama.com/download/ollama-darwin'; // Universal binary
-  }
-  outputName = 'ollama';
+  downloadUrl = 'https://github.com/ollama/ollama/releases/latest/download/Ollama-darwin.zip';
+  outputName = 'ollama-darwin.zip';
 } else if (platform === 'linux') {
   if (arch === 'arm64') {
-    downloadUrl = 'https://ollama.com/download/ollama-linux-arm64';
+    downloadUrl = 'https://github.com/ollama/ollama/releases/latest/download/ollama-linux-arm64.tar.zst';
   } else {
-    downloadUrl = 'https://ollama.com/download/ollama-linux-amd64';
+    downloadUrl = 'https://github.com/ollama/ollama/releases/latest/download/ollama-linux-amd64.tar.zst';
   }
-  outputName = 'ollama';
+  outputName = 'ollama-linux.tar.zst';
 }
 
 if (!downloadUrl) {
@@ -89,12 +85,15 @@ function extractAndCleanup() {
       process.exit(1);
     }
   } else if (platform === 'linux') {
-    console.log('[Ollama Downloader] Linux binary downloaded. Making executable...');
+    console.log('[Ollama Downloader] Extracting Linux zst tarball...');
     try {
+      const assetsDir = path.join(binDir, '..');
+      execSync(`zstd -d -c "${outputPath}" | tar -xf - -C "${assetsDir}"`);
       fs.chmodSync(path.join(binDir, 'ollama'), '755');
+      fs.unlinkSync(outputPath);
       console.log('[Ollama Downloader] Made binary executable.');
     } catch (e) {
-      console.error('[Ollama Downloader] Failed to chmod binary:', e.message);
+      console.error('[Ollama Downloader] Failed to extract zst tarball:', e.message);
       process.exit(1);
     }
   }
