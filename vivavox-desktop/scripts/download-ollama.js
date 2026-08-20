@@ -27,11 +27,11 @@ if (platform === 'win32') {
   outputName = 'ollama';
 } else if (platform === 'linux') {
   if (arch === 'arm64') {
-    downloadUrl = 'https://ollama.com/download/ollama-linux-arm64.tgz';
+    downloadUrl = 'https://ollama.com/download/ollama-linux-arm64';
   } else {
-    downloadUrl = 'https://ollama.com/download/ollama-linux-amd64.tgz';
+    downloadUrl = 'https://ollama.com/download/ollama-linux-amd64';
   }
-  outputName = 'ollama.tgz';
+  outputName = 'ollama';
 }
 
 if (!downloadUrl) {
@@ -89,16 +89,12 @@ function extractAndCleanup() {
       process.exit(1);
     }
   } else if (platform === 'linux') {
-    console.log('[Ollama Downloader] Extracting Linux tarball...');
+    console.log('[Ollama Downloader] Linux binary downloaded. Making executable...');
     try {
-      // Linux download is a .tgz containing bin/ollama and lib/ollama/
-      const assetsDir = path.join(binDir, '..');
-      execSync(`tar -xzf "${outputPath}" -C "${assetsDir}"`);
       fs.chmodSync(path.join(binDir, 'ollama'), '755');
-      fs.unlinkSync(outputPath);
       console.log('[Ollama Downloader] Made binary executable.');
     } catch (e) {
-      console.error('[Ollama Downloader] Failed to extract tarball:', e.message);
+      console.error('[Ollama Downloader] Failed to chmod binary:', e.message);
       process.exit(1);
     }
   }
