@@ -2,7 +2,7 @@ import { app, ipcMain } from 'electron';
 import { spawn, ChildProcess } from 'child_process';
 import path from 'path';
 import fs from 'fs';
-import pdfParse from 'pdf-parse';
+const pdfParse = require('pdf-parse');
 
 /**
  * AI Engine — Local Gemma Integration (Portable Bundled Ollama)
