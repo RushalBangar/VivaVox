@@ -51,34 +51,16 @@ const outputPath = path.join(binDir, outputName);
 
 console.log(`[Ollama Downloader] Downloading Ollama from ${downloadUrl}...`);
 
-const file = fs.createWriteStream(outputPath);
-
-https.get(downloadUrl, (response) => {
-  if (response.statusCode === 302 || response.statusCode === 301) {
-    // Handle redirect
-    https.get(response.headers.location, (redirectResponse) => {
-      redirectResponse.pipe(file);
-      file.on('finish', () => {
-        file.close();
-        extractAndCleanup();
-      });
-    }).on('error', (err) => {
-      fs.unlinkSync(outputPath);
-      console.error(err);
-      process.exit(1);
-    });
-  } else {
-    response.pipe(file);
-    file.on('finish', () => {
-      file.close();
-      extractAndCleanup();
-    });
+try {
+  execSync(`curl -L -o "${outputPath}" "${downloadUrl}"`, { stdio: 'inherit' });
+  extractAndCleanup();
+} catch (e) {
+  console.error(`Error downloading Ollama: ${e.message}`);
+  if (fs.existsSync(outputPath)) {
+    fs.unlinkSync(outputPath);
   }
-}).on('error', (err) => {
-  fs.unlinkSync(outputPath);
-  console.error(`Error downloading Ollama: ${err.message}`);
   process.exit(1);
-});
+}
 
 function extractAndCleanup() {
   console.log('[Ollama Downloader] Download complete.');
@@ -86,7 +68,6 @@ function extractAndCleanup() {
   if (platform === 'win32') {
     console.log('[Ollama Downloader] Extracting zip file...');
     try {
-      // Use PowerShell to extract zip natively on Windows without extra dependencies
       execSync(`powershell -command "Expand-Archive -Force -Path '${outputPath}' -DestinationPath '${binDir}'"`);
       fs.unlinkSync(outputPath);
       console.log('[Ollama Downloader] Extraction complete.');
@@ -94,9 +75,31 @@ function extractAndCleanup() {
       console.error('[Ollama Downloader] Failed to extract zip:', e.message);
       process.exit(1);
     }
-  } else {
-    // On Mac/Linux, make it executable
-    fs.chmodSync(outputPath, '755');
-    console.log('[Ollama Downloader] Made binary executable.');
+  } else if (platform === 'darwin') {
+    console.log('[Ollama Downloader] Extracting Mac zip file...');
+    try {
+      // Mac download is a zip containing Ollama.app. We just want the CLI binary.
+      execSync(`unzip -j -o "${outputPath}" "Ollama.app/Contents/MacOS/Ollama" -d "${binDir}"`);
+      fs.renameSync(path.join(binDir, 'Ollama'), path.join(binDir, 'ollama'));
+      fs.chmodSync(path.join(binDir, 'ollama'), '755');
+      fs.unlinkSync(outputPath);
+      console.log('[Ollama Downloader] Made binary executable.');
+    } catch (e) {
+      console.error('[Ollama Downloader] Failed to extract zip:', e.message);
+      process.exit(1);
+    }
+  } else if (platform === 'linux') {
+    console.log('[Ollama Downloader] Extracting Linux tarball...');
+    try {
+      // Linux download is a .tgz containing bin/ollama and lib/ollama/
+      const assetsDir = path.join(binDir, '..');
+      execSync(`tar -xzf "${outputPath}" -C "${assetsDir}"`);
+      fs.chmodSync(path.join(binDir, 'ollama'), '755');
+      fs.unlinkSync(outputPath);
+      console.log('[Ollama Downloader] Made binary executable.');
+    } catch (e) {
+      console.error('[Ollama Downloader] Failed to extract tarball:', e.message);
+      process.exit(1);
+    }
   }
 }

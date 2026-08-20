@@ -45,6 +45,7 @@ export function startOllamaServer() {
       ...process.env,
       OLLAMA_HOST: `127.0.0.1:${OLLAMA_PORT}`,
       OLLAMA_MODELS: modelsDir,
+      OLLAMA_VULKAN: '0',
     },
     windowsHide: true,
   });
