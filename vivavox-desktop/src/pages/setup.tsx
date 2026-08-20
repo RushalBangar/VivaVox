@@ -10,7 +10,7 @@ type SetupPhase = 'welcome' | 'downloading' | 'upload' | 'hardware-check' | 'ana
 export default function SetupPage() {
   const [file, setFile] = useState<File | null>(null);
   const [phase, setPhase] = useState<SetupPhase>('welcome');
-  const [resumeText, setResumeText] = useState('');
+  const [resumePath, setResumePath] = useState('');
   const [hardwareStatus, setHardwareStatus] = useState<any>(null);
   const [error, setError] = useState('');
   const [downloadProgress, setDownloadProgress] = useState(0);
@@ -52,12 +52,7 @@ export default function SetupPage() {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
-      try {
-        const text = await selectedFile.text();
-        setResumeText(text);
-      } catch {
-        setResumeText(`Resume: ${selectedFile.name}`);
-      }
+      setResumePath((selectedFile as any).path);
     }
   };
 
@@ -89,12 +84,12 @@ export default function SetupPage() {
   };
 
   const startAnalysis = async () => {
-    if (!resumeText) return;
+    if (!resumePath) return;
     setPhase('analyzing');
     setError('');
 
     try {
-      const result = await window.electronAPI.analyzeResume(resumeText);
+      const result = await window.electronAPI.analyzeResume(resumePath);
       sessionStorage.setItem('interviewQuestions', JSON.stringify(result.questions));
       sessionStorage.setItem('candidateSummary', result.summary);
 

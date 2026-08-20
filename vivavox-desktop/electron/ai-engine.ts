@@ -2,6 +2,7 @@ import { app, ipcMain } from 'electron';
 import { spawn, ChildProcess } from 'child_process';
 import path from 'path';
 import fs from 'fs';
+import pdfParse from 'pdf-parse';
 
 /**
  * AI Engine — Local Gemma Integration (Portable Bundled Ollama)
@@ -137,7 +138,20 @@ export function setupAIHandlers(): void {
   });
 
   // ─── Analyze Resume (Local REST) ─────────────────────────
-  ipcMain.handle('ai:analyze-resume', async (_event, text: string): Promise<AnalysisResult> => {
+  ipcMain.handle('ai:analyze-resume', async (_event, filePath: string): Promise<AnalysisResult> => {
+    let text = '';
+    try {
+      if (filePath.toLowerCase().endsWith('.pdf')) {
+        const dataBuffer = fs.readFileSync(filePath);
+        const data = await pdfParse(dataBuffer);
+        text = data.text;
+      } else {
+        text = fs.readFileSync(filePath, 'utf8');
+      }
+    } catch (err: any) {
+      throw new Error(`Failed to read resume file: ${err.message}`);
+    }
+
     const prompt = `Analyze this resume and generate 10 interview questions.
 Return ONLY a JSON object: {"questions": ["q1", "q2", ...], "summary": "brief summary"}
 

@@ -20,7 +20,7 @@ export interface HardwareStatus {
 
 export interface ElectronAPI {
   // AI Engine
-  analyzeResume: (text: string) => Promise<AnalysisResult>;
+  analyzeResume: (filePath: string) => Promise<AnalysisResult>;
   evaluateAnswer: (question: string, answer: string) => Promise<string>;
   setApiKey: (key: string) => Promise<void>;
   checkModel: () => Promise<boolean>;
@@ -44,8 +44,8 @@ export interface ElectronAPI {
 
 const electronAPI: ElectronAPI = {
   // ─── AI Engine ─────────────────────────────────────────────
-  analyzeResume: (text: string) =>
-    ipcRenderer.invoke('ai:analyze-resume', text),
+  analyzeResume: (filePath: string) =>
+    ipcRenderer.invoke('ai:analyze-resume', filePath),
 
   evaluateAnswer: (question: string, answer: string) =>
     ipcRenderer.invoke('ai:evaluate-answer', question, answer),
