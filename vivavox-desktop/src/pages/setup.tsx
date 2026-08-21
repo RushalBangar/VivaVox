@@ -74,17 +74,26 @@ export default function SetupPage() {
 
       status.allPassed = status.webcamAvailable && status.microphoneAvailable && status.ramSufficient;
       setHardwareStatus(status);
-
-      if (status.allPassed) {
-        setTimeout(() => startAnalysis(), 2000);
-      }
     } catch (err: any) {
       setError(err.message || 'Hardware check failed');
     }
   };
 
+  useEffect(() => {
+    if (phase === 'hardware-check' && hardwareStatus?.allPassed) {
+      const timer = setTimeout(() => {
+        startAnalysis();
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [phase, hardwareStatus, resumePath]);
+
   const startAnalysis = async () => {
-    if (!resumePath) return;
+    if (!resumePath) {
+      setError('Resume path is missing. Please try uploading again.');
+      setPhase('upload');
+      return;
+    }
     setPhase('analyzing');
     setError('');
 
